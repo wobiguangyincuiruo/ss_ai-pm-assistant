@@ -92,7 +92,7 @@ function AppContent() {
   return (
     <div
       key={state.sessionId}
-      style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}
+      style={{ height: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#fbfbfa' }}
     >
       <AutoOpeningMessage />
       <AutoSaver />

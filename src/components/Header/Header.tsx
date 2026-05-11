@@ -7,83 +7,82 @@ import { APIKeyInput } from './APIKeyInput';
 import type { ApiProvider } from '../../types';
 
 const headerStyle: React.CSSProperties = {
-  height: 56,
+  height: 48,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  padding: '0 24px',
-  borderBottom: '1px solid #e8e8e8',
+  padding: '0 20px',
   backgroundColor: '#fff',
   flexShrink: 0,
+  borderBottom: '1px solid #f0f0ec',
 };
 
 const leftStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
-  gap: 16,
+  gap: 12,
 };
 
 const rightStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
-  gap: 8,
+  gap: 6,
+};
+
+const pillBase: React.CSSProperties = {
+  height: 28,
+  padding: '0 10px',
+  fontSize: 12,
+  border: '1px solid transparent',
+  borderRadius: 6,
+  outline: 'none',
+  backgroundColor: 'transparent',
+  color: '#6b6b67',
+  fontFamily: 'inherit',
+  cursor: 'pointer',
+  transition: 'background 0.15s, color 0.15s',
 };
 
 const selectStyle: React.CSSProperties = {
-  padding: '4px 6px',
-  fontSize: 12,
-  border: '1px solid #d9d9d9',
-  borderRadius: 4,
-  outline: 'none',
-  backgroundColor: '#fff',
+  ...pillBase,
+  appearance: 'auto' as React.CSSProperties['appearance'],
 };
 
 const modelInputStyle: React.CSSProperties = {
-  width: 150,
-  padding: '4px 8px',
-  fontSize: 12,
-  border: '1px solid #d9d9d9',
-  borderRadius: 4,
-  outline: 'none',
-  fontFamily: 'monospace',
+  ...pillBase,
+  width: 140,
+  fontFamily: 'inherit',
+  cursor: 'text',
 };
 
 const urlInputStyle: React.CSSProperties = {
-  width: 180,
-  padding: '4px 8px',
-  fontSize: 12,
-  border: '1px solid #d9d9d9',
-  borderRadius: 4,
-  outline: 'none',
-  fontFamily: 'monospace',
+  ...pillBase,
+  width: 170,
+  fontFamily: 'inherit',
+  cursor: 'text',
 };
 
 const titleStyle: React.CSSProperties = {
-  fontSize: 16,
-  fontWeight: 700,
+  fontSize: 14,
+  fontWeight: 600,
   color: '#1a1a1a',
   whiteSpace: 'nowrap',
+  letterSpacing: '-0.01em',
 };
 
-const historyBtnStyle: React.CSSProperties = {
-  padding: '4px 8px',
-  fontSize: 16,
-  border: '1px solid #d9d9d9',
+const iconBtnStyle: React.CSSProperties = {
+  ...pillBase,
+  width: 28,
+  padding: 0,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontSize: 15,
   borderRadius: 6,
-  backgroundColor: '#fff',
-  color: '#666',
-  cursor: 'pointer',
-  lineHeight: 1,
 };
 
 const newSessionBtnStyle: React.CSSProperties = {
-  padding: '4px 14px',
-  fontSize: 13,
-  border: '1px solid #d9d9d9',
-  borderRadius: 6,
-  backgroundColor: '#fff',
-  color: '#666',
-  cursor: 'pointer',
+  ...pillBase,
 };
 
 const PROVIDER_OPTIONS: { value: ApiProvider; label: string }[] = [
@@ -108,7 +107,7 @@ export function Header({ onToggleHistory }: HeaderProps) {
   return (
     <header style={headerStyle}>
       <div style={leftStyle}>
-        <button style={historyBtnStyle} onClick={onToggleHistory} title="历史记录">
+        <button style={iconBtnStyle} onClick={onToggleHistory} title="历史记录">
           ☰
         </button>
         <span style={titleStyle}>{skill?.name ?? '数字员工'}</span>
@@ -142,7 +141,7 @@ export function Header({ onToggleHistory }: HeaderProps) {
             placeholder="https://api.example.com"
             value={state.apiBaseUrl}
             onChange={(e) => dispatch({ type: 'SET_API_BASE_URL', payload: e.target.value })}
-            title="自定义 API 端点地址"
+            title="自定义 API 端点"
           />
         )}
         <ModeToggle />

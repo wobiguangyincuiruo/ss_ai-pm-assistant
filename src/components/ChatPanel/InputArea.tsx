@@ -3,47 +3,54 @@ import { useAppState } from '../../context/AppContext';
 import { useChat } from '../../hooks/useChat';
 
 const wrapperStyle: React.CSSProperties = {
-  padding: '16px 24px',
-  borderTop: '1px solid #e8e8e8',
-  backgroundColor: '#fff',
+  padding: '0 32px 20px',
 };
 
 const rowStyle: React.CSSProperties = {
   display: 'flex',
-  gap: 12,
+  gap: 10,
   alignItems: 'flex-end',
+  backgroundColor: '#fff',
+  borderRadius: 12,
+  padding: '8px 8px 8px 16px',
+  border: '1px solid #e9e9e7',
+  transition: 'border-color 0.15s, box-shadow 0.15s',
 };
 
 const textareaStyle: React.CSSProperties = {
   flex: 1,
-  padding: '10px 14px',
+  padding: '6px 0',
   fontSize: 14,
   lineHeight: 1.6,
-  border: '1px solid #d9d9d9',
-  borderRadius: 8,
+  border: 'none',
   outline: 'none',
   resize: 'none',
-  minHeight: 44,
+  minHeight: 24,
   maxHeight: 120,
   fontFamily: 'inherit',
+  color: '#1a1a1a',
+  backgroundColor: 'transparent',
 };
 
 const btnStyle: React.CSSProperties = {
-  padding: '10px 24px',
-  fontSize: 14,
-  fontWeight: 600,
+  width: 32,
+  height: 32,
   border: 'none',
   borderRadius: 8,
-  backgroundColor: '#1677ff',
+  backgroundColor: '#2383e2',
   color: '#fff',
   cursor: 'pointer',
-  whiteSpace: 'nowrap',
-  transition: 'background-color 0.2s',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontSize: 16,
+  flexShrink: 0,
+  transition: 'background-color 0.15s',
 };
 
 const btnDisabledStyle: React.CSSProperties = {
   ...btnStyle,
-  backgroundColor: '#d9d9d9',
+  backgroundColor: '#d9d9d6',
   cursor: 'not-allowed',
 };
 
@@ -83,13 +90,15 @@ export function InputArea({ disabled }: { disabled: boolean }) {
     }
   };
 
+  const canSend = !disabled && text.trim().length > 0;
+
   return (
     <div style={wrapperStyle}>
       <div style={rowStyle}>
         <textarea
           ref={textareaRef}
           style={textareaStyle}
-          placeholder="输入您的回答...（Enter 发送，Shift+Enter 换行）"
+          placeholder="输入消息...（Enter 发送，Shift+Enter 换行）"
           value={text}
           onChange={(e) => {
             setText(e.target.value);
@@ -100,11 +109,12 @@ export function InputArea({ disabled }: { disabled: boolean }) {
           rows={1}
         />
         <button
-          style={disabled || !text.trim() ? btnDisabledStyle : btnStyle}
-          disabled={disabled || !text.trim()}
+          style={canSend ? btnStyle : btnDisabledStyle}
+          disabled={!canSend}
           onClick={handleSend}
+          title="发送"
         >
-          发送
+          ↑
         </button>
       </div>
     </div>

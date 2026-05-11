@@ -5,25 +5,26 @@ import type { Message } from '../../types';
 const listStyle: React.CSSProperties = {
   flex: 1,
   overflow: 'auto',
-  padding: '20px 24px',
+  padding: '24px 32px',
   display: 'flex',
   flexDirection: 'column',
-  gap: 16,
+  gap: 20,
 };
 
 const bubbleBase: React.CSSProperties = {
-  maxWidth: '75%',
-  padding: '12px 16px',
-  borderRadius: 12,
+  maxWidth: '72%',
+  padding: '10px 16px',
+  borderRadius: 10,
   fontSize: 14,
-  lineHeight: 1.7,
+  lineHeight: 1.65,
   wordBreak: 'break-word',
 };
 
 const timeStyle: React.CSSProperties = {
   fontSize: 11,
-  color: '#999',
-  marginTop: 4,
+  color: '#b4b4b0',
+  marginTop: 3,
+  padding: '0 4px',
 };
 
 function formatTime(ts: number) {
@@ -40,9 +41,9 @@ export function MessageList({ messages }: { messages: Message[] }) {
   if (messages.length === 0) {
     return (
       <div style={{ ...listStyle, alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ color: '#bfbfbf', fontSize: 14, textAlign: 'center', maxWidth: 320 }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>💬</div>
-          在下方输入您的工作痛点，AI 助手将引导您完成需求分析
+        <div style={{ color: '#b4b4b0', fontSize: 14, textAlign: 'center', maxWidth: 340 }}>
+          <div style={{ fontSize: 40, marginBottom: 12, opacity: 0.6 }}>✦</div>
+          在下方描述您的需求，AI 助手将引导您逐步完成
         </div>
       </div>
     );
@@ -62,11 +63,10 @@ export function MessageList({ messages }: { messages: Message[] }) {
           <div
             style={{
               ...bubbleBase,
-              backgroundColor: msg.role === 'user' ? '#1677ff' : '#fff',
-              color: msg.role === 'user' ? '#fff' : '#333',
-              borderBottomLeftRadius: msg.role === 'assistant' ? 4 : 12,
-              borderBottomRightRadius: msg.role === 'user' ? 4 : 12,
-              boxShadow: msg.role === 'assistant' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+              backgroundColor: msg.role === 'user' ? '#2383e2' : '#f3f3f0',
+              color: msg.role === 'user' ? '#fff' : '#1a1a1a',
+              borderBottomRightRadius: msg.role === 'user' ? 4 : 10,
+              borderBottomLeftRadius: msg.role === 'assistant' ? 4 : 10,
             }}
           >
             <ReactMarkdown>{msg.content}</ReactMarkdown>

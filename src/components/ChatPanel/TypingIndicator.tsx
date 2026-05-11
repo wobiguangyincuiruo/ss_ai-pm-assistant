@@ -4,20 +4,19 @@ const wrapperStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   gap: 6,
-  padding: '8px 24px',
-  fontSize: 13,
-  color: '#999',
+  padding: '6px 32px',
+  fontSize: 12,
+  color: '#b4b4b0',
 };
 
 const dotStyle: React.CSSProperties = {
-  width: 6,
-  height: 6,
+  width: 5,
+  height: 5,
   borderRadius: '50%',
-  backgroundColor: '#bfbfbf',
+  backgroundColor: '#b4b4b0',
   animation: 'typingBounce 1.4s infinite ease-in-out both',
 };
 
-// Inject keyframes once
 const styleId = 'typing-keyframes';
 if (typeof document !== 'undefined' && !document.getElementById(styleId)) {
   const sheet = document.createElement('style');

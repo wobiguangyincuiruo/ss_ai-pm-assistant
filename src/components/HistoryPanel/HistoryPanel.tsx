@@ -10,10 +10,10 @@ interface HistoryPanelProps {
 }
 
 const panelStyle: React.CSSProperties = {
-  width: 300,
+  width: 280,
   height: '100%',
-  borderRight: '1px solid #e8e8e8',
-  backgroundColor: '#fafafa',
+  borderRight: '1px solid #f0f0ec',
+  backgroundColor: '#fff',
   display: 'flex',
   flexDirection: 'column',
   flexShrink: 0,
@@ -24,12 +24,11 @@ const headerStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  padding: '12px 16px',
-  borderBottom: '1px solid #e8e8e8',
+  padding: '16px 16px 12px',
 };
 
-const titleStyle: React.CSSProperties = {
-  fontSize: 14,
+const headerTitleStyle: React.CSSProperties = {
+  fontSize: 13,
   fontWeight: 600,
   color: '#1a1a1a',
 };
@@ -38,85 +37,87 @@ const closeBtnStyle: React.CSSProperties = {
   border: 'none',
   backgroundColor: 'transparent',
   cursor: 'pointer',
-  fontSize: 18,
-  color: '#999',
+  fontSize: 16,
+  color: '#b4b4b0',
   padding: '0 4px',
   lineHeight: 1,
+  borderRadius: 4,
 };
 
 const listStyle: React.CSSProperties = {
   flex: 1,
   overflowY: 'auto',
-  padding: '8px 12px',
+  padding: '0 12px 12px',
 };
 
-const cardStyle: React.CSSProperties = {
+const cardBase: React.CSSProperties = {
   padding: '10px 12px',
-  borderRadius: 6,
-  backgroundColor: '#fff',
-  border: '1px solid #e8e8e8',
-  marginBottom: 8,
+  borderRadius: 8,
+  marginBottom: 4,
   cursor: 'pointer',
   position: 'relative',
-  transition: 'border-color 0.2s',
+  transition: 'background 0.15s',
 };
 
-const cardActiveStyle: React.CSSProperties = {
-  ...cardStyle,
-  borderLeft: '3px solid #1677ff',
-  paddingLeft: 10,
+const cardActive: React.CSSProperties = {
+  ...cardBase,
+  backgroundColor: '#f3f3f0',
+};
+
+const cardInactive: React.CSSProperties = {
+  ...cardBase,
+  backgroundColor: 'transparent',
 };
 
 const cardTitleStyle: React.CSSProperties = {
   fontSize: 13,
-  fontWeight: 600,
+  fontWeight: 500,
   color: '#1a1a1a',
-  marginBottom: 4,
+  marginBottom: 2,
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
+  paddingRight: 40,
 };
 
 const cardMetaStyle: React.CSSProperties = {
   fontSize: 11,
-  color: '#999',
-  marginBottom: 4,
+  color: '#b4b4b0',
+  marginBottom: 1,
 };
 
 const cardPreviewStyle: React.CSSProperties = {
   fontSize: 11,
-  color: '#bbb',
+  color: '#c8c8c4',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
+  marginTop: 4,
 };
 
-const renameBtnStyle: React.CSSProperties = {
+const actionBtnBase: React.CSSProperties = {
   position: 'absolute',
-  top: 6,
-  right: 26,
+  top: 8,
   border: 'none',
   backgroundColor: 'transparent',
   cursor: 'pointer',
   fontSize: 13,
-  color: '#ccc',
+  color: '#b4b4b0',
   padding: '2px 4px',
   lineHeight: 1,
-  borderRadius: 3,
+  borderRadius: 4,
+  transition: 'color 0.15s',
+};
+
+const renameBtnStyle: React.CSSProperties = {
+  ...actionBtnBase,
+  right: 24,
 };
 
 const deleteBtnStyle: React.CSSProperties = {
-  position: 'absolute',
-  top: 6,
+  ...actionBtnBase,
   right: 6,
-  border: 'none',
-  backgroundColor: 'transparent',
-  cursor: 'pointer',
   fontSize: 14,
-  color: '#ccc',
-  padding: '2px 4px',
-  lineHeight: 1,
-  borderRadius: 3,
 };
 
 const emptyStyle: React.CSSProperties = {
@@ -125,10 +126,11 @@ const emptyStyle: React.CSSProperties = {
   alignItems: 'center',
   justifyContent: 'center',
   height: '100%',
-  color: '#bbb',
+  color: '#b4b4b0',
   fontSize: 13,
   textAlign: 'center',
   padding: 24,
+  lineHeight: 1.7,
 };
 
 function formatTime(ts: number): string {
@@ -157,7 +159,7 @@ function SessionCard({
   onDelete: () => void;
 }) {
   return (
-    <div style={active ? cardActiveStyle : cardStyle} onClick={onClick}>
+    <div style={active ? cardActive : cardInactive} onClick={onClick}>
       <div style={cardTitleStyle}>{meta.title}</div>
       <div style={cardMetaStyle}>
         {meta.skillName} · {meta.messageCount}条消息
@@ -207,7 +209,7 @@ export function HistoryPanel({ visible, onClose }: HistoryPanelProps) {
   return (
     <div style={panelStyle}>
       <div style={headerStyle}>
-        <span style={titleStyle}>历史记录</span>
+        <span style={headerTitleStyle}>历史记录</span>
         <button style={closeBtnStyle} onClick={onClose}>
           ×
         </button>
@@ -218,7 +220,9 @@ export function HistoryPanel({ visible, onClose }: HistoryPanelProps) {
         ) : sessions.length === 0 ? (
           <div style={emptyStyle}>
             <div>暂无历史记录</div>
-            <div style={{ marginTop: 8 }}>发送第一条消息后会自动保存</div>
+            <div style={{ marginTop: 6, fontSize: 12, opacity: 0.8 }}>
+              发送第一条消息后会自动保存
+            </div>
           </div>
         ) : (
           sessions

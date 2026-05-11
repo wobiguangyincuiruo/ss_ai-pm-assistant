@@ -6,16 +6,22 @@ const containerStyle: React.CSSProperties = {
   display: 'flex',
   borderRadius: 6,
   overflow: 'hidden',
-  border: '1px solid #d9d9d9',
+  backgroundColor: '#f3f3f0',
+  height: 28,
 };
 
 const btnBase: React.CSSProperties = {
-  padding: '4px 14px',
+  height: 28,
+  padding: '0 12px',
   border: 'none',
   cursor: 'pointer',
   fontSize: 12,
   fontWeight: 500,
-  transition: 'all 0.2s',
+  color: '#6b6b67',
+  backgroundColor: 'transparent',
+  borderRadius: 6,
+  transition: 'all 0.15s',
+  fontFamily: 'inherit',
 };
 
 export function ModeToggle() {
@@ -25,42 +31,37 @@ export function ModeToggle() {
 
   const activeStyle: React.CSSProperties = {
     ...btnBase,
-    backgroundColor: '#1677ff',
-    color: '#fff',
+    backgroundColor: '#fff',
+    color: '#1a1a1a',
+    boxShadow: '0 1px 2px rgba(0,0,0,0.06)',
   };
 
   const inactiveStyle: React.CSSProperties = {
     ...btnBase,
     backgroundColor: 'transparent',
-    color: '#666',
   };
 
   const disabledStyle: React.CSSProperties = {
     ...btnBase,
-    backgroundColor: 'transparent',
-    color: '#bfbfbf',
+    color: '#bfbfbc',
     cursor: 'not-allowed',
-    borderLeft: '1px solid #d9d9d9',
   };
 
   return (
     <div style={containerStyle}>
       <button
-        style={state.mode === 'mock' && !mockDisabled ? activeStyle : inactiveStyle}
+        style={state.mode === 'mock' && !mockDisabled ? activeStyle : mockDisabled ? disabledStyle : inactiveStyle}
         disabled={mockDisabled}
         onClick={() => dispatch({ type: 'SET_MODE', payload: 'mock' })}
         title={mockDisabled ? '当前技能无演示数据' : undefined}
       >
-        演示模式
+        演示
       </button>
       <button
-        style={{
-          ...(state.mode === 'api' ? activeStyle : inactiveStyle),
-          borderLeft: '1px solid #d9d9d9',
-        }}
+        style={state.mode === 'api' ? activeStyle : inactiveStyle}
         onClick={() => dispatch({ type: 'SET_MODE', payload: 'api' })}
       >
-        API模式
+        API
       </button>
     </div>
   );

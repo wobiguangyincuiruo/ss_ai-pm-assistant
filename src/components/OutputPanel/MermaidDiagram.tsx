@@ -19,7 +19,7 @@ export function MermaidDiagram({ chart }: { chart: string }) {
       .catch(() => {
         if (!cancelled)
           setSvg(
-            '<p style="color:#999;font-size:12px;">流程图渲染失败，请检查 Mermaid 语法</p>'
+            '<p style="color:#b4b4b0;font-size:12px;">流程图渲染失败，请检查 Mermaid 语法</p>'
           );
       });
     return () => {
@@ -33,9 +33,7 @@ export function MermaidDiagram({ chart }: { chart: string }) {
       style={{
         margin: '8px 0',
         overflow: 'auto',
-        backgroundColor: '#fafafa',
         borderRadius: 8,
-        padding: 12,
       }}
       dangerouslySetInnerHTML={{ __html: svg }}
     />

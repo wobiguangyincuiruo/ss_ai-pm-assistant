@@ -6,8 +6,8 @@ import { MermaidDiagram } from './MermaidDiagram';
 const panelStyle: React.CSSProperties = {
   flex: 2,
   overflow: 'auto',
-  padding: 20,
-  borderLeft: '1px solid #e8e8e8',
+  padding: '24px 28px',
+  borderLeft: '1px solid #f0f0ec',
   backgroundColor: '#fff',
 };
 
@@ -17,36 +17,57 @@ const emptyStyle: React.CSSProperties = {
   alignItems: 'center',
   justifyContent: 'center',
   height: '100%',
-  color: '#bfbfbf',
+  color: '#b4b4b0',
   fontSize: 14,
   textAlign: 'center',
+  lineHeight: 1.7,
 };
 
 const sectionHeaderStyle: React.CSSProperties = {
   cursor: 'pointer',
   fontWeight: 600,
   padding: '10px 0',
-  borderBottom: '1px solid #f0f0f0',
   display: 'flex',
   alignItems: 'center',
   gap: 6,
-  fontSize: 14,
-  color: '#333',
+  fontSize: 13,
+  color: '#1a1a1a',
   userSelect: 'none',
+  borderBottom: '1px solid #f3f3f0',
 };
 
 const sectionBodyStyle: React.CSSProperties = {
-  padding: '12px 0 12px 20px',
+  padding: '12px 0 12px 18px',
   fontSize: 13,
   lineHeight: 1.8,
-  color: '#555',
+  color: '#4b4b47',
 };
 
-const titleStyle: React.CSSProperties = {
-  margin: '0 0 12px 0',
-  fontSize: 15,
-  fontWeight: 700,
+const headerRowStyle: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: 4,
+};
+
+const panelTitleStyle: React.CSSProperties = {
+  fontSize: 14,
+  fontWeight: 600,
   color: '#1a1a1a',
+  letterSpacing: '-0.01em',
+};
+
+const exportBtnStyle: React.CSSProperties = {
+  height: 28,
+  padding: '0 12px',
+  fontSize: 12,
+  border: '1px solid transparent',
+  borderRadius: 6,
+  backgroundColor: 'transparent',
+  cursor: 'pointer',
+  color: '#6b6b67',
+  fontFamily: 'inherit',
+  transition: 'background 0.15s',
 };
 
 export function OutputPanel() {
@@ -68,11 +89,10 @@ export function OutputPanel() {
     return (
       <div style={panelStyle}>
         <div style={emptyStyle}>
-          <div style={{ fontSize: 40, marginBottom: 12 }}>📋</div>
+          <div style={{ fontSize: 32, marginBottom: 12, opacity: 0.5 }}>◻</div>
           {skill?.description ?? '输出文档将在对话过程中逐步生成...'}
-          <br />
-          <span style={{ fontSize: 12, marginTop: 8 }}>
-            当 AI 收集到足够信息后，右侧将自动填充对应章节
+          <span style={{ fontSize: 12, marginTop: 8, opacity: 0.7 }}>
+            AI 收集到足够信息后自动填充对应章节
           </span>
         </div>
       </div>
@@ -103,27 +123,9 @@ export function OutputPanel() {
 
   return (
     <div style={panelStyle}>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 8,
-        }}
-      >
-        <h3 style={titleStyle}>输出文档</h3>
-        <button
-          onClick={handleExport}
-          style={{
-            padding: '4px 12px',
-            fontSize: 12,
-            border: '1px solid #d9d9d9',
-            borderRadius: 4,
-            backgroundColor: '#fff',
-            cursor: 'pointer',
-            color: '#666',
-          }}
-        >
+      <div style={headerRowStyle}>
+        <span style={panelTitleStyle}>输出文档</span>
+        <button onClick={handleExport} style={exportBtnStyle}>
           导出 Markdown
         </button>
       </div>
@@ -131,12 +133,14 @@ export function OutputPanel() {
         section.content ? (
           <div key={section.id}>
             <div style={sectionHeaderStyle} onClick={() => toggleSection(section.id)}>
-              <span style={{ fontSize: 12, width: 16 }}>
+              <span style={{ fontSize: 10, width: 14, color: '#b4b4b0' }}>
                 {expanded.has(section.id) ? '▾' : '▸'}
               </span>
               {section.title}
               {section.mermaidDiagram && (
-                <span style={{ fontSize: 10, color: '#1677ff', marginLeft: 4 }}>[流程图]</span>
+                <span style={{ fontSize: 10, color: '#2383e2', marginLeft: 4, fontWeight: 400 }}>
+                  流程图
+                </span>
               )}
             </div>
             {expanded.has(section.id) && (

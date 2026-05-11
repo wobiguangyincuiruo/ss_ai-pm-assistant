@@ -4,15 +4,18 @@ import { SKILLS, getSkillById } from '../../data/skills';
 import type { OutputSection } from '../../types';
 
 const selectStyle: React.CSSProperties = {
-  padding: '4px 10px',
-  fontSize: 13,
-  border: '1px solid #d9d9d9',
+  height: 28,
+  padding: '0 10px',
+  fontSize: 12,
+  border: '1px solid transparent',
   borderRadius: 6,
-  backgroundColor: '#fff',
-  color: '#333',
+  backgroundColor: 'transparent',
+  color: '#6b6b67',
   cursor: 'pointer',
   outline: 'none',
-  maxWidth: 200,
+  maxWidth: 180,
+  fontFamily: 'inherit',
+  appearance: 'auto' as React.CSSProperties['appearance'],
 };
 
 export function SkillSelector() {
