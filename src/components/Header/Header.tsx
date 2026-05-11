@@ -4,6 +4,7 @@ import { getSkillById } from '../../data/skills';
 import { SkillSelector } from './SkillSelector';
 import { ModeToggle } from './ModeToggle';
 import { APIKeyInput } from './APIKeyInput';
+import type { ApiProvider } from '../../types';
 
 const headerStyle: React.CSSProperties = {
   height: 56,
@@ -28,8 +29,27 @@ const rightStyle: React.CSSProperties = {
   gap: 8,
 };
 
+const selectStyle: React.CSSProperties = {
+  padding: '4px 6px',
+  fontSize: 12,
+  border: '1px solid #d9d9d9',
+  borderRadius: 4,
+  outline: 'none',
+  backgroundColor: '#fff',
+};
+
 const modelInputStyle: React.CSSProperties = {
   width: 150,
+  padding: '4px 8px',
+  fontSize: 12,
+  border: '1px solid #d9d9d9',
+  borderRadius: 4,
+  outline: 'none',
+  fontFamily: 'monospace',
+};
+
+const urlInputStyle: React.CSSProperties = {
+  width: 180,
   padding: '4px 8px',
   fontSize: 12,
   border: '1px solid #d9d9d9',
@@ -55,6 +75,13 @@ const newSessionBtnStyle: React.CSSProperties = {
   cursor: 'pointer',
 };
 
+const PROVIDER_OPTIONS: { value: ApiProvider; label: string }[] = [
+  { value: 'deepseek', label: 'DeepSeek' },
+  { value: 'anthropic', label: 'Anthropic' },
+  { value: 'openai', label: 'OpenAI' },
+  { value: 'custom', label: '自定义' },
+];
+
 export function Header() {
   const { state, dispatch } = useAppState();
   const skill = getSkillById(state.currentSkillId);
@@ -70,13 +97,36 @@ export function Header() {
         <SkillSelector />
       </div>
       <div style={rightStyle}>
+        <select
+          style={selectStyle}
+          value={state.apiProvider}
+          onChange={(e) =>
+            dispatch({ type: 'SET_API_PROVIDER', payload: e.target.value as ApiProvider })
+          }
+          title="API 提供商"
+        >
+          {PROVIDER_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
         <input
           style={modelInputStyle}
-          placeholder="模型名"
+          placeholder={state.apiProvider === 'anthropic' ? 'claude-sonnet-4-20250514' : 'deepseek-chat'}
           value={state.model}
           onChange={(e) => dispatch({ type: 'SET_MODEL', payload: e.target.value })}
-          title="DeepSeek 模型 ID，如 deepseek-chat 或 deepseek-reasoner"
+          title="模型 ID"
         />
+        {state.apiProvider === 'custom' && (
+          <input
+            style={urlInputStyle}
+            placeholder="https://api.example.com"
+            value={state.apiBaseUrl}
+            onChange={(e) => dispatch({ type: 'SET_API_BASE_URL', payload: e.target.value })}
+            title="自定义 API 端点地址"
+          />
+        )}
         <ModeToggle />
         <APIKeyInput />
         <button style={newSessionBtnStyle} onClick={handleNewSession}>

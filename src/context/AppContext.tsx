@@ -17,8 +17,10 @@ const defaultSkill = getSkillById(DEFAULT_SKILL_ID)!;
 
 const initialState: AppState = {
   mode: 'mock',
+  apiProvider: 'deepseek',
   apiKey: '',
   model: 'deepseek-chat',
+  apiBaseUrl: '',
   currentSkillId: DEFAULT_SKILL_ID,
   messages: [],
   output: { sections: buildInitialOutput(DEFAULT_SKILL_ID) },
@@ -42,6 +44,12 @@ function reducer(state: AppState, action: AppAction): AppState {
 
     case 'SET_MODEL':
       return { ...state, model: action.payload };
+
+    case 'SET_API_PROVIDER':
+      return { ...state, apiProvider: action.payload };
+
+    case 'SET_API_BASE_URL':
+      return { ...state, apiBaseUrl: action.payload };
 
     case 'UPDATE_OUTPUT_SECTION': {
       const newSections = state.output.sections.map((s) =>

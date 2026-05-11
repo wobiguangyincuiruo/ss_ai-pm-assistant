@@ -1,7 +1,8 @@
 // ============================================================
-// Mode
+// Mode & API Provider
 // ============================================================
 export type AppMode = 'mock' | 'api';
+export type ApiProvider = 'anthropic' | 'deepseek' | 'openai' | 'custom';
 
 // ============================================================
 // Messages
@@ -68,8 +69,10 @@ export interface Skill {
 // ============================================================
 export interface AppState {
   mode: AppMode;
+  apiProvider: ApiProvider;
   apiKey: string;
   model: string;
+  apiBaseUrl: string;
   currentSkillId: string;
   messages: Message[];
   output: OutputDocument;
@@ -82,8 +85,10 @@ export interface AppState {
 // ============================================================
 export type AppAction =
   | { type: 'SET_MODE'; payload: AppMode }
+  | { type: 'SET_API_PROVIDER'; payload: ApiProvider }
   | { type: 'SET_API_KEY'; payload: string }
   | { type: 'SET_MODEL'; payload: string }
+  | { type: 'SET_API_BASE_URL'; payload: string }
   | { type: 'ADD_MESSAGE'; payload: Message }
   | { type: 'SET_TYPING'; payload: boolean }
   | { type: 'UPDATE_OUTPUT_SECTION'; payload: OutputUpdate }

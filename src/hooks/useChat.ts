@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { useAppState } from '../context/AppContext';
 import { getSkillById } from '../data/skills';
 import { createMockEngine } from '../services/mockEngine';
-import { sendToDeepSeek } from '../services/claudeApi';
+import { sendToApi } from '../services/claudeApi';
 import { parseOutputUpdate } from '../services/stepClassifier';
 import type { Message } from '../types';
 
@@ -39,7 +39,14 @@ export function useChat() {
           }
         } else {
           if (!skill) throw new Error('当前技能未找到');
-          responseText = await sendToDeepSeek(history, state.apiKey, skill.systemPrompt, state.model);
+          responseText = await sendToApi(
+            history,
+            state.apiKey,
+            skill.systemPrompt,
+            state.model,
+            state.apiProvider,
+            state.apiBaseUrl
+          );
           const outputUpdates = parseOutputUpdate(responseText, skill.outputs);
           outputUpdates.forEach((update) => {
             dispatch({ type: 'UPDATE_OUTPUT_SECTION', payload: update });
@@ -65,7 +72,7 @@ export function useChat() {
         dispatch({ type: 'SET_TYPING', payload: false });
       }
     },
-    [state.mode, state.apiKey, state.model, state.currentSkillId, dispatch]
+    [state.mode, state.apiKey, state.model, state.apiProvider, state.apiBaseUrl, state.currentSkillId, dispatch]
   );
 
   return { sendMessage };
