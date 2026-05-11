@@ -52,7 +52,7 @@ export function useChat() {
         const errorMsg: Message = {
           id: uuid(),
           role: 'assistant',
-          content: '抱歉，请求出错了：' + (err as Error).message,
+          content: '❌ ' + (err as Error).message,
           timestamp: Date.now(),
         };
         dispatch({ type: 'ADD_MESSAGE', payload: errorMsg });
