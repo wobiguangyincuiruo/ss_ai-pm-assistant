@@ -1,9 +1,9 @@
 import React from 'react';
 import { useAppState } from '../../context/AppContext';
-import { StepProgressIndicator } from './StepProgressIndicator';
+import { getSkillById } from '../../data/skills';
+import { SkillSelector } from './SkillSelector';
 import { ModeToggle } from './ModeToggle';
 import { APIKeyInput } from './APIKeyInput';
-import { v4 as uuid } from 'uuid';
 
 const headerStyle: React.CSSProperties = {
   height: 56,
@@ -19,7 +19,7 @@ const headerStyle: React.CSSProperties = {
 const leftStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
-  gap: 32,
+  gap: 16,
 };
 
 const rightStyle: React.CSSProperties = {
@@ -46,7 +46,8 @@ const newSessionBtnStyle: React.CSSProperties = {
 };
 
 export function Header() {
-  const { dispatch } = useAppState();
+  const { state, dispatch } = useAppState();
+  const skill = getSkillById(state.currentSkillId);
 
   const handleNewSession = () => {
     dispatch({ type: 'NEW_SESSION' });
@@ -55,8 +56,8 @@ export function Header() {
   return (
     <header style={headerStyle}>
       <div style={leftStyle}>
-        <span style={titleStyle}>AI 产品需求分析助手</span>
-        <StepProgressIndicator />
+        <span style={titleStyle}>{skill?.name ?? '数字员工'}</span>
+        <SkillSelector />
       </div>
       <div style={rightStyle}>
         <ModeToggle />

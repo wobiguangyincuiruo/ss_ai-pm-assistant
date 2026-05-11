@@ -11,18 +11,32 @@ export function MermaidDiagram({ chart }: { chart: string }) {
   useEffect(() => {
     if (!chart) return;
     let cancelled = false;
-    mermaid.render(idRef.current, chart).then(({ svg: result }) => {
-      if (!cancelled) setSvg(result);
-    }).catch(() => {
-      if (!cancelled) setSvg(`<p style="color:#999;font-size:12px;">流程图渲染失败，请检查 Mermaid 语法</p>`);
-    });
-    return () => { cancelled = true; };
+    mermaid
+      .render(idRef.current, chart)
+      .then(({ svg: result }) => {
+        if (!cancelled) setSvg(result);
+      })
+      .catch(() => {
+        if (!cancelled)
+          setSvg(
+            '<p style="color:#999;font-size:12px;">流程图渲染失败，请检查 Mermaid 语法</p>'
+          );
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [chart]);
 
   return (
     <div
       ref={containerRef}
-      style={{ margin: '8px 0', overflow: 'auto', backgroundColor: '#fafafa', borderRadius: 8, padding: 12 }}
+      style={{
+        margin: '8px 0',
+        overflow: 'auto',
+        backgroundColor: '#fafafa',
+        borderRadius: 8,
+        padding: 12,
+      }}
       dangerouslySetInnerHTML={{ __html: svg }}
     />
   );

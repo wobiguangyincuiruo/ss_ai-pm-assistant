@@ -1,26 +1,26 @@
 import React, { createContext, useContext, useReducer } from 'react';
 import { v4 as uuid } from 'uuid';
-import type { AppState, AppAction, PRD, StepNumber } from '../types';
+import type { AppState, AppAction, OutputSection } from '../types';
+import { getSkillById, DEFAULT_SKILL_ID } from '../data/skills';
 
-const INITIAL_PRD: PRD = {
-  sections: [
-    { id: 1, title: '1. 背景与目标', content: '' },
-    { id: 2, title: '2. 用户角色', content: '' },
-    { id: 3, title: '3. 当前业务流程', content: '', mermaidDiagram: '' },
-    { id: 4, title: '4. AI 能力介入点', content: '' },
-    { id: 5, title: '5. 功能需求', content: '' },
-    { id: 6, title: '6. 数据与接口需求', content: '' },
-    { id: 7, title: '7. 非功能需求', content: '' },
-    { id: 8, title: '8. 验收标准', content: '' },
-  ],
-};
+function buildInitialOutput(skillId: string): OutputSection[] {
+  const skill = getSkillById(skillId);
+  if (!skill) return [];
+  return skill.outputs.map((tpl) => ({
+    id: tpl.id,
+    title: tpl.title,
+    content: '',
+  }));
+}
+
+const defaultSkill = getSkillById(DEFAULT_SKILL_ID)!;
 
 const initialState: AppState = {
   mode: 'mock',
   apiKey: '',
-  currentStep: 1 as StepNumber,
+  currentSkillId: DEFAULT_SKILL_ID,
   messages: [],
-  prd: INITIAL_PRD,
+  output: { sections: buildInitialOutput(DEFAULT_SKILL_ID) },
   isTyping: false,
   sessionId: uuid(),
 };
@@ -29,16 +29,18 @@ function reducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
     case 'ADD_MESSAGE':
       return { ...state, messages: [...state.messages, action.payload] };
+
     case 'SET_TYPING':
       return { ...state, isTyping: action.payload };
+
     case 'SET_MODE':
       return { ...state, mode: action.payload };
+
     case 'SET_API_KEY':
       return { ...state, apiKey: action.payload };
-    case 'SET_CURRENT_STEP':
-      return { ...state, currentStep: action.payload };
-    case 'UPDATE_PRD_SECTION': {
-      const newSections = state.prd.sections.map((s) =>
+
+    case 'UPDATE_OUTPUT_SECTION': {
+      const newSections = state.output.sections.map((s) =>
         s.id === action.payload.sectionId
           ? {
               ...s,
@@ -47,15 +49,32 @@ function reducer(state: AppState, action: AppAction): AppState {
             }
           : s
       );
-      return { ...state, prd: { sections: newSections } };
+      return { ...state, output: { sections: newSections } };
     }
+
     case 'NEW_SESSION':
       return {
-        ...initialState,
+        ...state,
+        messages: [],
+        output: { sections: buildInitialOutput(state.currentSkillId) },
+        isTyping: false,
         sessionId: uuid(),
-        mode: state.mode,
-        apiKey: state.apiKey,
       };
+
+    case 'LOAD_SKILL': {
+      const skill = getSkillById(action.payload.skillId);
+      const forcedMode = skill && !skill.hasMock ? 'api' : state.mode;
+      return {
+        ...state,
+        mode: forcedMode,
+        currentSkillId: action.payload.skillId,
+        messages: [],
+        output: { sections: action.payload.outputSections },
+        isTyping: false,
+        sessionId: uuid(),
+      };
+    }
+
     default:
       return state;
   }

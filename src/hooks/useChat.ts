@@ -1,9 +1,10 @@
 import { useCallback } from 'react';
 import { v4 as uuid } from 'uuid';
 import { useAppState } from '../context/AppContext';
-import { mockEngine } from '../services/mockEngine';
+import { getSkillById } from '../data/skills';
+import { createMockEngine } from '../services/mockEngine';
 import { sendToClaude } from '../services/claudeApi';
-import { classifyStep, parsePRDUpdate } from '../services/stepClassifier';
+import { parseOutputUpdate } from '../services/stepClassifier';
 import type { Message } from '../types';
 
 export function useChat() {
@@ -11,34 +12,38 @@ export function useChat() {
 
   const sendMessage = useCallback(
     async (text: string, currentMessages: Message[]) => {
-      const userMsg: Message = { id: uuid(), role: 'user', content: text, timestamp: Date.now() };
+      const userMsg: Message = {
+        id: uuid(),
+        role: 'user',
+        content: text,
+        timestamp: Date.now(),
+      };
       dispatch({ type: 'ADD_MESSAGE', payload: userMsg });
 
       const history = [...currentMessages, userMsg];
-
       dispatch({ type: 'SET_TYPING', payload: true });
+
+      const skill = getSkillById(state.currentSkillId);
 
       try {
         let responseText: string;
 
-        if (state.mode === 'mock') {
-          responseText = await mockEngine.getNextResponse(history);
-          const prdUpdates = mockEngine.getPRDUpdates(history);
-          if (prdUpdates) {
-            prdUpdates.forEach((update) => {
-              dispatch({ type: 'UPDATE_PRD_SECTION', payload: update });
+        if (state.mode === 'mock' && skill?.hasMock && skill.mockDialogue) {
+          const engine = createMockEngine(skill.mockDialogue);
+          responseText = await engine.getNextResponse(history);
+          const outputUpdates = engine.getOutputUpdates(history);
+          if (outputUpdates) {
+            outputUpdates.forEach((update) => {
+              dispatch({ type: 'UPDATE_OUTPUT_SECTION', payload: update });
             });
           }
-          const step = mockEngine.getCurrentStep(history);
-          dispatch({ type: 'SET_CURRENT_STEP', payload: step });
         } else {
-          responseText = await sendToClaude(history, state.apiKey);
-          const prdUpdates = parsePRDUpdate(responseText);
-          prdUpdates.forEach((update) => {
-            dispatch({ type: 'UPDATE_PRD_SECTION', payload: update });
+          if (!skill) throw new Error('当前技能未找到');
+          responseText = await sendToClaude(history, state.apiKey, skill.systemPrompt);
+          const outputUpdates = parseOutputUpdate(responseText, skill.outputs);
+          outputUpdates.forEach((update) => {
+            dispatch({ type: 'UPDATE_OUTPUT_SECTION', payload: update });
           });
-          const step = classifyStep([...history]);
-          dispatch({ type: 'SET_CURRENT_STEP', payload: step });
         }
 
         const assistantMsg: Message = {
@@ -60,7 +65,7 @@ export function useChat() {
         dispatch({ type: 'SET_TYPING', payload: false });
       }
     },
-    [state.mode, state.apiKey, dispatch]
+    [state.mode, state.apiKey, state.currentSkillId, dispatch]
   );
 
   return { sendMessage };

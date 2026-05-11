@@ -1,11 +1,4 @@
-import type { StepNumber } from '../types';
-import type { PRDUpdate } from '../types';
-
-export interface MockDialogueEntry {
-  step: StepNumber;
-  assistantMessage: string;
-  prdUpdates?: PRDUpdate[];
-}
+import type { MockDialogueEntry } from '../types';
 
 const SECTION_1_3_CONTENT = `
 **业务场景：** 客服部门每日收到约200封客户投诉邮件，需人工逐封阅读、分类、判断升级部门并转发。
@@ -98,32 +91,27 @@ const SECTION_8_CONTENT = `
 export const MOCK_DIALOGUE: MockDialogueEntry[] = [
   // ======== STEP 1: 建立上下文 ========
   {
-    step: 1,
     assistantMessage:
       '您好！我是需求分析助手。请您用一段话描述您日常工作中**最耗时**或**最头疼**的一个任务。不用考虑技术，只告诉我您现在是怎么做的，大概需要几步，涉及哪些人和系统。',
   },
 
   // ======== STEP 2: 还原当前流程 ========
   {
-    step: 2,
     assistantMessage:
       '明白了，您每天处理客户投诉邮件，需要逐封阅读然后决定升级给哪个部门。请问：完成这个任务，您会用到哪些文件或信息？比如Excel表格、邮件、微信群消息等。',
   },
   {
-    step: 2,
     assistantMessage:
       '好的，您主要用邮件客户端和一个Excel分类表。那么，哪些步骤是您每天固定要重复做的？',
   },
   {
-    step: 2,
     assistantMessage:
       '当您判断应该升级给哪个部门时，需要从别处查找或比对什么数据吗？比如有没有一个标准清单或经验规则？',
   },
   {
-    step: 2,
     assistantMessage:
       '做完分类和转发后，输出的结果是什么？谁会用到您这个处理结果？',
-    prdUpdates: [
+    outputUpdates: [
       { sectionId: 1, content: SECTION_1_3_CONTENT },
       { sectionId: 2, content: SECTION_2_CONTENT },
       { sectionId: 3, content: SECTION_3_TEXT, mermaidDiagram: SECTION_3_MERMAID },
@@ -133,40 +121,34 @@ export const MOCK_DIALOGUE: MockDialogueEntry[] = [
   // ======== STEP 3: 识别AI替代机会（4个维度） ========
   // 维度1：重复劳动
   {
-    step: 3,
     assistantMessage:
       '如果这些重复步骤中，有一个"自动助手"能帮您完成，您希望它帮您处理哪一步？是读邮件、判断类型、还是记录Excel？',
   },
   // 维度2：规则明确
   {
-    step: 3,
     assistantMessage:
       '刚才您提到的"判断投诉类型"这一步，是不是有固定的规则？比如检测到"发货慢""包裹破损"这些词就归到物流类投诉？',
   },
   // 维度3：信息整合
   {
-    step: 3,
     assistantMessage:
       '您在做分类判断时，是否需要同时看邮件正文、客户历史购买记录、还有Excel里的分类规则表？如果让您描述这三个信息怎么整合起来做判断，您会怎么说？',
   },
   // 维度4：预测建议
   {
-    step: 3,
     assistantMessage:
       '如果有一个工具能根据过去的投诉数据，提前告诉您"这个客户的投诉如果不及时处理，大概率会升级为差评或退款纠纷"，您觉得会有帮助吗？',
   },
 
   // ======== STEP 4: 共识真实需求 ========
   {
-    step: 4,
     assistantMessage:
       '我理解您希望：当新投诉邮件到达时，系统自动读取邮件内容，根据预设分类规则判断投诉类型和严重程度，自动转发给对应部门，并在Excel中记录归档。同时，系统能根据历史模式标记高风险投诉以便优先处理。是这样吗？请确认，确认后我立即为您生成完整的产品需求文档。',
   },
   {
-    step: 4,
     assistantMessage:
       '好的，需求已确认！我现在为您生成了完整的产品需求文档（PRD），请查看右侧面板。包含8个章节：背景与目标、用户角色、当前业务流程（含流程图）、AI能力介入点、功能需求、数据需求、非功能需求、验收标准。您可以逐节展开查看，也可以导出为文档分享给团队。',
-    prdUpdates: [
+    outputUpdates: [
       { sectionId: 4, content: SECTION_4_CONTENT },
       { sectionId: 5, content: SECTION_5_CONTENT },
       { sectionId: 6, content: SECTION_6_CONTENT },

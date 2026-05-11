@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAppState } from '../../context/AppContext';
+import { getSkillById } from '../../data/skills';
 import { MermaidDiagram } from './MermaidDiagram';
 
 const panelStyle: React.CSSProperties = {
@@ -48,8 +49,9 @@ const titleStyle: React.CSSProperties = {
   color: '#1a1a1a',
 };
 
-export function PRDPanel() {
+export function OutputPanel() {
   const { state } = useAppState();
+  const skill = getSkillById(state.currentSkillId);
   const [expanded, setExpanded] = useState<Set<number>>(new Set([1, 2, 3]));
 
   const toggleSection = (id: number) => {
@@ -60,20 +62,25 @@ export function PRDPanel() {
     });
   };
 
-  const filledSections = state.prd.sections.filter((s) => s.content.length > 0);
+  const filledSections = state.output.sections.filter((s) => s.content.length > 0);
 
   if (filledSections.length === 0) {
     return (
       <div style={panelStyle}>
         <div style={emptyStyle}>
           <div style={{ fontSize: 40, marginBottom: 12 }}>📋</div>
-          产品需求文档（PRD）将在对话过程中逐步生成...
+          {skill?.description ?? '输出文档将在对话过程中逐步生成...'}
           <br />
-          <span style={{ fontSize: 12, marginTop: 8 }}>当 AI 收集到足够信息后，右侧将自动填充对应章节</span>
+          <span style={{ fontSize: 12, marginTop: 8 }}>
+            当 AI 收集到足够信息后，右侧将自动填充对应章节
+          </span>
         </div>
       </div>
     );
   }
+
+  const skillName = skill?.name ?? '数字员工';
+  const outputLabel = skill?.outputLabel ?? '文档';
 
   const handleExport = () => {
     const md = filledSections
@@ -89,15 +96,22 @@ export function PRDPanel() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'PRD_产品需求文档.md';
+    a.download = `${skillName}_${outputLabel}.md`;
     a.click();
     URL.revokeObjectURL(url);
   };
 
   return (
     <div style={panelStyle}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-        <h3 style={titleStyle}>产品需求文档</h3>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 8,
+        }}
+      >
+        <h3 style={titleStyle}>输出文档</h3>
         <button
           onClick={handleExport}
           style={{
@@ -113,7 +127,7 @@ export function PRDPanel() {
           导出 Markdown
         </button>
       </div>
-      {state.prd.sections.map((section) =>
+      {state.output.sections.map((section) =>
         section.content ? (
           <div key={section.id}>
             <div style={sectionHeaderStyle} onClick={() => toggleSection(section.id)}>

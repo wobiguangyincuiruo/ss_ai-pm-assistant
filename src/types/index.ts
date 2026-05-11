@@ -1,6 +1,11 @@
+// ============================================================
+// Mode
+// ============================================================
 export type AppMode = 'mock' | 'api';
-export type StepNumber = 1 | 2 | 3 | 4;
 
+// ============================================================
+// Messages
+// ============================================================
 export interface Message {
   id: string;
   role: 'user' | 'assistant';
@@ -8,38 +13,77 @@ export interface Message {
   timestamp: number;
 }
 
-export interface PRDSection {
+// ============================================================
+// Output (renamed from PRD)
+// ============================================================
+
+/** A section template defined by a skill's outputs declaration */
+export interface OutputSectionTemplate {
+  id: number;
+  title: string;
+}
+
+/** A live section with content filled by AI responses */
+export interface OutputSection {
   id: number;
   title: string;
   content: string;
   mermaidDiagram?: string;
 }
 
-export interface PRD {
-  sections: PRDSection[];
+/** The full output document */
+export interface OutputDocument {
+  sections: OutputSection[];
 }
 
-export interface AppState {
-  mode: AppMode;
-  apiKey: string;
-  currentStep: StepNumber;
-  messages: Message[];
-  prd: PRD;
-  isTyping: boolean;
-  sessionId: string;
-}
-
-export interface PRDUpdate {
+/** A single section update extracted from an AI response */
+export interface OutputUpdate {
   sectionId: number;
   content: string;
   mermaidDiagram?: string;
 }
 
+// ============================================================
+// Skill definition
+// ============================================================
+export interface MockDialogueEntry {
+  assistantMessage: string;
+  outputUpdates?: OutputUpdate[];
+}
+
+export interface Skill {
+  id: string;
+  name: string;
+  description: string;
+  systemPrompt: string;
+  outputs: OutputSectionTemplate[];
+  hasMock: boolean;
+  mockDialogue?: MockDialogueEntry[];
+  openingMessage: string;
+  outputLabel?: string;
+}
+
+// ============================================================
+// AppState
+// ============================================================
+export interface AppState {
+  mode: AppMode;
+  apiKey: string;
+  currentSkillId: string;
+  messages: Message[];
+  output: OutputDocument;
+  isTyping: boolean;
+  sessionId: string;
+}
+
+// ============================================================
+// Reducer actions
+// ============================================================
 export type AppAction =
   | { type: 'SET_MODE'; payload: AppMode }
   | { type: 'SET_API_KEY'; payload: string }
-  | { type: 'SET_CURRENT_STEP'; payload: StepNumber }
   | { type: 'ADD_MESSAGE'; payload: Message }
   | { type: 'SET_TYPING'; payload: boolean }
-  | { type: 'UPDATE_PRD_SECTION'; payload: PRDUpdate }
-  | { type: 'NEW_SESSION' };
+  | { type: 'UPDATE_OUTPUT_SECTION'; payload: OutputUpdate }
+  | { type: 'NEW_SESSION' }
+  | { type: 'LOAD_SKILL'; payload: { skillId: string; outputSections: OutputSection[] } };
