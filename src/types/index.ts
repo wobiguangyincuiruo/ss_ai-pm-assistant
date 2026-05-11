@@ -45,6 +45,29 @@ export interface OutputUpdate {
 }
 
 // ============================================================
+// Session history
+// ============================================================
+export interface SessionMeta {
+  id: string;
+  title: string;
+  skillId: string;
+  skillName: string;
+  messageCount: number;
+  preview: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface SessionData {
+  meta: SessionMeta;
+  messages: Message[];
+  output: OutputDocument;
+  apiProvider: ApiProvider;
+  model: string;
+  apiBaseUrl: string;
+}
+
+// ============================================================
 // Skill definition
 // ============================================================
 export interface MockDialogueEntry {
@@ -93,4 +116,5 @@ export type AppAction =
   | { type: 'SET_TYPING'; payload: boolean }
   | { type: 'UPDATE_OUTPUT_SECTION'; payload: OutputUpdate }
   | { type: 'NEW_SESSION' }
-  | { type: 'LOAD_SKILL'; payload: { skillId: string; outputSections: OutputSection[] } };
+  | { type: 'LOAD_SKILL'; payload: { skillId: string; outputSections: OutputSection[] } }
+  | { type: 'LOAD_SESSION'; payload: SessionData };

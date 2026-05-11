@@ -65,6 +65,17 @@ const titleStyle: React.CSSProperties = {
   whiteSpace: 'nowrap',
 };
 
+const historyBtnStyle: React.CSSProperties = {
+  padding: '4px 8px',
+  fontSize: 16,
+  border: '1px solid #d9d9d9',
+  borderRadius: 6,
+  backgroundColor: '#fff',
+  color: '#666',
+  cursor: 'pointer',
+  lineHeight: 1,
+};
+
 const newSessionBtnStyle: React.CSSProperties = {
   padding: '4px 14px',
   fontSize: 13,
@@ -82,7 +93,11 @@ const PROVIDER_OPTIONS: { value: ApiProvider; label: string }[] = [
   { value: 'custom', label: '自定义' },
 ];
 
-export function Header() {
+interface HeaderProps {
+  onToggleHistory: () => void;
+}
+
+export function Header({ onToggleHistory }: HeaderProps) {
   const { state, dispatch } = useAppState();
   const skill = getSkillById(state.currentSkillId);
 
@@ -93,6 +108,9 @@ export function Header() {
   return (
     <header style={headerStyle}>
       <div style={leftStyle}>
+        <button style={historyBtnStyle} onClick={onToggleHistory} title="历史记录">
+          ☰
+        </button>
         <span style={titleStyle}>{skill?.name ?? '数字员工'}</span>
         <SkillSelector />
       </div>

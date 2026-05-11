@@ -87,6 +87,21 @@ function reducer(state: AppState, action: AppAction): AppState {
       };
     }
 
+    case 'LOAD_SESSION': {
+      const { meta, messages, output, apiProvider, model, apiBaseUrl } = action.payload;
+      return {
+        ...state,
+        messages,
+        output,
+        apiProvider,
+        model,
+        apiBaseUrl,
+        currentSkillId: meta.skillId,
+        sessionId: meta.id,
+        isTyping: false,
+      };
+    }
+
     default:
       return state;
   }
