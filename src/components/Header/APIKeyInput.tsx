@@ -21,7 +21,7 @@ export function APIKeyInput() {
       <input
         type={visible ? 'text' : 'password'}
         style={inputStyle}
-        placeholder="输入 Anthropic API Key"
+        placeholder="输入 DeepSeek API Key"
         value={state.apiKey}
         onChange={(e) => dispatch({ type: 'SET_API_KEY', payload: e.target.value })}
         onFocus={() => setVisible(true)}

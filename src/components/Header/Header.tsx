@@ -25,7 +25,17 @@ const leftStyle: React.CSSProperties = {
 const rightStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
-  gap: 12,
+  gap: 8,
+};
+
+const modelInputStyle: React.CSSProperties = {
+  width: 150,
+  padding: '4px 8px',
+  fontSize: 12,
+  border: '1px solid #d9d9d9',
+  borderRadius: 4,
+  outline: 'none',
+  fontFamily: 'monospace',
 };
 
 const titleStyle: React.CSSProperties = {
@@ -60,6 +70,13 @@ export function Header() {
         <SkillSelector />
       </div>
       <div style={rightStyle}>
+        <input
+          style={modelInputStyle}
+          placeholder="模型名"
+          value={state.model}
+          onChange={(e) => dispatch({ type: 'SET_MODEL', payload: e.target.value })}
+          title="DeepSeek 模型 ID，如 deepseek-chat 或 deepseek-reasoner"
+        />
         <ModeToggle />
         <APIKeyInput />
         <button style={newSessionBtnStyle} onClick={handleNewSession}>

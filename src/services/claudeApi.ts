@@ -1,29 +1,47 @@
 import type { Message } from '../types';
 
-export async function sendToClaude(
+export async function sendToDeepSeek(
   history: Message[],
   apiKey: string,
-  systemPrompt: string
+  systemPrompt: string,
+  model: string
 ): Promise<string> {
   if (!apiKey || !apiKey.trim()) {
-    throw new Error('请先在顶部填入 Anthropic API Key（以 sk-ant- 开头）');
+    throw new Error('请先在顶部填入 DeepSeek API Key（以 sk- 开头）');
   }
 
-  const messages = normalizeMessages(history);
+  // DeepSeek 使用 OpenAI 兼容格式：system 消息 + user/assistant 交替
+  const messages: { role: string; content: string }[] = [
+    { role: 'system', content: systemPrompt },
+  ];
+
+  // 跳过开头的 assistant 消息（开场白），确保第一条 user
+  const startIdx = history.findIndex((m) => m.role === 'user');
+  if (startIdx === -1) {
+    throw new Error('对话历史中没有用户消息，无法发送请求');
+  }
+
+  for (let i = startIdx; i < history.length; i++) {
+    const msg = history[i];
+    const prev = messages[messages.length - 1];
+    if (prev && prev.role === msg.role) {
+      prev.content += '\n\n' + msg.content;
+    } else {
+      messages.push({ role: msg.role, content: msg.content });
+    }
+  }
 
   let response: Response;
   try {
-    response = await fetch('/api/anthropic/v1/messages', {
+    response = await fetch('/api/deepseek/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
+        Authorization: 'Bearer ' + apiKey,
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model,
         max_tokens: 4096,
-        system: systemPrompt,
         messages,
       }),
     });
@@ -35,10 +53,7 @@ export async function sendToClaude(
     let errorMsg = `HTTP ${response.status}`;
     try {
       const err = await response.json();
-      const errDetail = err.error;
-      if (errDetail) {
-        errorMsg = `[${errDetail.type}] ${errDetail.message}`;
-      }
+      errorMsg = err.error?.message || err.message || errorMsg;
     } catch {
       // ignore parse failure
     }
@@ -46,28 +61,5 @@ export async function sendToClaude(
   }
 
   const data = await response.json();
-  return data.content?.[0]?.text || '';
-}
-
-/**
- * Anthropic Messages API 要求 messages 以 user 开头且严格交替。
- * 跳过开头的 assistant 消息，合并连续同角色消息。
- */
-function normalizeMessages(history: Message[]): { role: 'user' | 'assistant'; content: string }[] {
-  const startIdx = history.findIndex((m) => m.role === 'user');
-  if (startIdx === -1) {
-    throw new Error('对话历史中没有用户消息，无法发送请求');
-  }
-
-  const messages: { role: 'user' | 'assistant'; content: string }[] = [];
-  for (let i = startIdx; i < history.length; i++) {
-    const msg = history[i];
-    const prev = messages[messages.length - 1];
-    if (prev && prev.role === msg.role) {
-      prev.content += '\n\n' + msg.content;
-    } else {
-      messages.push({ role: msg.role as 'user' | 'assistant', content: msg.content });
-    }
-  }
-  return messages;
+  return data.choices?.[0]?.message?.content || '';
 }

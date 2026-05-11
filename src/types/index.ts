@@ -69,6 +69,7 @@ export interface Skill {
 export interface AppState {
   mode: AppMode;
   apiKey: string;
+  model: string;
   currentSkillId: string;
   messages: Message[];
   output: OutputDocument;
@@ -82,6 +83,7 @@ export interface AppState {
 export type AppAction =
   | { type: 'SET_MODE'; payload: AppMode }
   | { type: 'SET_API_KEY'; payload: string }
+  | { type: 'SET_MODEL'; payload: string }
   | { type: 'ADD_MESSAGE'; payload: Message }
   | { type: 'SET_TYPING'; payload: boolean }
   | { type: 'UPDATE_OUTPUT_SECTION'; payload: OutputUpdate }
