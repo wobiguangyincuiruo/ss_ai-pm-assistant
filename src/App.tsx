@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { AppProvider, useAppState } from './context/AppContext';
 import { getSkillById } from './data/skills';
 import { saveSession, saveSessionToServer } from './services/storage';
@@ -6,6 +6,7 @@ import { Header } from './components/Header/Header';
 import { ChatPanel } from './components/ChatPanel/ChatPanel';
 import { OutputPanel } from './components/OutputPanel/OutputPanel';
 import { HistoryPanel } from './components/HistoryPanel/HistoryPanel';
+import { ResizeHandle } from './components/ResizeHandle';
 
 function buildPrdMarkdown(
   sections: { title: string; content: string; mermaidDiagram?: string }[],
@@ -53,8 +54,10 @@ function PrdAutoSaver() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ filename, content: md }),
-    }).catch(() => {
-      // dev mode or server not available — silently skip
+    }).then((res) => {
+      if (res.ok) console.log(`[PrdAutoSaver] 已保存到 prds/${filename}`);
+    }).catch((err) => {
+      console.error('[PrdAutoSaver] 保存失败:', err);
     });
   }, [state.output, state.currentSkillId, state.messages]);
 
@@ -96,6 +99,7 @@ function AutoOpeningMessage() {
 function AutoSaver() {
   const { state } = useAppState();
   const prevLenRef = useRef(state.messages.length);
+  const saveCountRef = useRef(0);
 
   useEffect(() => {
     const len = state.messages.length;
@@ -126,8 +130,18 @@ function AutoSaver() {
       model: state.model,
       apiBaseUrl: state.apiBaseUrl,
     };
-    saveSession(sessionData);
-    saveSessionToServer(sessionData);
+
+    try {
+      saveSession(sessionData);
+      saveCountRef.current += 1;
+      console.log(`[AutoSave] 已保存会话 #${saveCountRef.current}: ${sessionData.meta.title} (${len} 条消息)`);
+    } catch (err) {
+      console.error('[AutoSave] localStorage 保存失败:', err);
+    }
+
+    saveSessionToServer(sessionData).catch((err) => {
+      console.error('[AutoSave] 服务端保存失败:', err);
+    });
   }, [
     state.messages,
     state.output,
@@ -144,11 +158,22 @@ function AutoSaver() {
 function AppContent() {
   const { state } = useAppState();
   const [historyVisible, setHistoryVisible] = useState(false);
+  const [historyWidth, setHistoryWidth] = useState(280);
+  const [outputWidth, setOutputWidth] = useState(380);
+
+  const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
+
+  const onHistoryResize = useCallback((delta: number) => {
+    setHistoryWidth((w) => clamp(w + delta, 200, 500));
+  }, []);
+
+  const onOutputResize = useCallback((delta: number) => {
+    setOutputWidth((w) => clamp(w - delta, 250, 800));
+  }, []);
 
   return (
     <div
-      key={state.sessionId}
-      style={{ height: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#fbfbfa' }}
+      style={{ height: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#f5f5f7' }}
     >
       <AutoOpeningMessage />
       <AutoSaver />
@@ -158,9 +183,12 @@ function AppContent() {
         <HistoryPanel
           visible={historyVisible}
           onClose={() => setHistoryVisible(false)}
+          width={historyWidth}
         />
+        {historyVisible && <ResizeHandle direction="horizontal" onResize={onHistoryResize} />}
         <ChatPanel />
-        <OutputPanel />
+        <ResizeHandle direction="horizontal" onResize={onOutputResize} />
+        <OutputPanel width={outputWidth} />
       </div>
     </div>
   );

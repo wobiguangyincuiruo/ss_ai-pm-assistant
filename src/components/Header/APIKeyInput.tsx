@@ -2,17 +2,17 @@ import React, { useState } from 'react';
 import { useAppState } from '../../context/AppContext';
 
 const inputStyle: React.CSSProperties = {
-  height: 28,
+  height: 30,
   width: 150,
-  padding: '0 10px',
-  fontSize: 12,
-  border: '1px solid transparent',
-  borderRadius: 6,
+  padding: '0 12px',
+  fontSize: 13,
+  border: '1px solid #e7e6e9',
+  borderRadius: 20,
   outline: 'none',
-  backgroundColor: 'transparent',
-  color: '#1a1a1a',
+  backgroundColor: '#fff',
+  color: '#1a1a2e',
   fontFamily: 'inherit',
-  transition: 'background 0.15s',
+  transition: 'border-color 0.15s',
 };
 
 const placeholder = '输入 API Key';

@@ -6,14 +6,14 @@ const wrapperStyle: React.CSSProperties = {
   gap: 6,
   padding: '6px 32px',
   fontSize: 12,
-  color: '#b4b4b0',
+  color: '#a0a0ab',
 };
 
 const dotStyle: React.CSSProperties = {
   width: 5,
   height: 5,
   borderRadius: '50%',
-  backgroundColor: '#b4b4b0',
+  backgroundColor: '#818cf8',
   animation: 'typingBounce 1.4s infinite ease-in-out both',
 };
 

@@ -4,22 +4,23 @@ import { getSkillById } from '../../data/skills';
 
 const containerStyle: React.CSSProperties = {
   display: 'flex',
-  borderRadius: 6,
+  borderRadius: 8,
   overflow: 'hidden',
-  backgroundColor: '#f3f3f0',
-  height: 28,
+  border: '1px solid #e8e8ed',
+  backgroundColor: '#f5f5f7',
+  height: 32,
 };
 
 const btnBase: React.CSSProperties = {
-  height: 28,
-  padding: '0 12px',
+  height: 32,
+  padding: '0 14px',
   border: 'none',
   cursor: 'pointer',
-  fontSize: 12,
+  fontSize: 13,
   fontWeight: 500,
-  color: '#6b6b67',
+  color: '#80808b',
   backgroundColor: 'transparent',
-  borderRadius: 6,
+  borderRadius: 8,
   transition: 'all 0.15s',
   fontFamily: 'inherit',
 };
@@ -32,7 +33,7 @@ export function ModeToggle() {
   const activeStyle: React.CSSProperties = {
     ...btnBase,
     backgroundColor: '#fff',
-    color: '#1a1a1a',
+    color: '#1a1a2e',
     boxShadow: '0 1px 2px rgba(0,0,0,0.06)',
   };
 

@@ -4,13 +4,13 @@ import { SKILLS, getSkillById } from '../../data/skills';
 import type { OutputSection } from '../../types';
 
 const selectStyle: React.CSSProperties = {
-  height: 28,
-  padding: '0 10px',
-  fontSize: 12,
-  border: '1px solid transparent',
-  borderRadius: 6,
-  backgroundColor: 'transparent',
-  color: '#6b6b67',
+  height: 30,
+  padding: '0 12px',
+  fontSize: 13,
+  border: '1px solid #e7e6e9',
+  borderRadius: 20,
+  backgroundColor: '#fff',
+  color: '#1a1a2e',
   cursor: 'pointer',
   outline: 'none',
   maxWidth: 180,

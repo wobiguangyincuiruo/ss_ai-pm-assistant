@@ -2,14 +2,18 @@ import React, { useState } from 'react';
 import { useAppState } from '../../context/AppContext';
 import { getSkillById } from '../../data/skills';
 import { MermaidDiagram } from './MermaidDiagram';
+import { exportToWord } from '../../services/docxExport';
 
-const panelStyle: React.CSSProperties = {
-  flex: 2,
-  overflow: 'auto',
-  padding: '24px 28px',
-  borderLeft: '1px solid #f0f0ec',
-  backgroundColor: '#fff',
-};
+function panelStyle(w: number): React.CSSProperties {
+  return {
+    width: w,
+    flexShrink: 0,
+    overflow: 'auto',
+    padding: '24px 28px',
+    borderLeft: '1px solid #e8e8ed',
+    backgroundColor: '#ffffff',
+  };
+}
 
 const emptyStyle: React.CSSProperties = {
   display: 'flex',
@@ -17,7 +21,7 @@ const emptyStyle: React.CSSProperties = {
   alignItems: 'center',
   justifyContent: 'center',
   height: '100%',
-  color: '#b4b4b0',
+  color: '#80808b',
   fontSize: 14,
   textAlign: 'center',
   lineHeight: 1.7,
@@ -31,16 +35,16 @@ const sectionHeaderStyle: React.CSSProperties = {
   alignItems: 'center',
   gap: 6,
   fontSize: 13,
-  color: '#1a1a1a',
+  color: '#1a1a2e',
   userSelect: 'none',
-  borderBottom: '1px solid #f3f3f0',
+  borderBottom: '1px solid #e8e8ed',
 };
 
 const sectionBodyStyle: React.CSSProperties = {
   padding: '12px 0 12px 18px',
   fontSize: 13,
   lineHeight: 1.8,
-  color: '#4b4b47',
+  color: '#80808b',
 };
 
 const headerRowStyle: React.CSSProperties = {
@@ -53,27 +57,29 @@ const headerRowStyle: React.CSSProperties = {
 const panelTitleStyle: React.CSSProperties = {
   fontSize: 14,
   fontWeight: 600,
-  color: '#1a1a1a',
-  letterSpacing: '-0.01em',
+  color: '#1a1a2e',
+  letterSpacing: '-0.02em',
 };
 
 const exportBtnStyle: React.CSSProperties = {
-  height: 28,
-  padding: '0 12px',
+  height: 30,
+  padding: '0 14px',
   fontSize: 12,
-  border: '1px solid transparent',
-  borderRadius: 6,
-  backgroundColor: 'transparent',
+  border: '1px solid #e8e8ed',
+  borderRadius: 20,
+  backgroundColor: '#fff',
   cursor: 'pointer',
-  color: '#6b6b67',
+  color: '#1a1a2e',
+  fontWeight: 500,
   fontFamily: 'inherit',
-  transition: 'background 0.15s',
+  transition: 'background 0.15s, border-color 0.15s',
 };
 
-export function OutputPanel() {
+export function OutputPanel({ width }: { width: number }) {
   const { state } = useAppState();
   const skill = getSkillById(state.currentSkillId);
   const [expanded, setExpanded] = useState<Set<number>>(new Set([1, 2, 3]));
+  const [exporting, setExporting] = useState(false);
 
   const toggleSection = (id: number) => {
     setExpanded((prev) => {
@@ -87,7 +93,7 @@ export function OutputPanel() {
 
   if (filledSections.length === 0) {
     return (
-      <div style={panelStyle}>
+      <div style={panelStyle(width)}>
         <div style={emptyStyle}>
           <div style={{ fontSize: 32, marginBottom: 12, opacity: 0.5 }}>◻</div>
           {skill?.description ?? '输出文档将在对话过程中逐步生成...'}
@@ -102,7 +108,7 @@ export function OutputPanel() {
   const skillName = skill?.name ?? '数字员工';
   const outputLabel = skill?.outputLabel ?? '文档';
 
-  const handleExport = () => {
+  const handleExportMd = () => {
     const md = filledSections
       .map((s) => {
         let block = `## ${s.title}\n\n${s.content}`;
@@ -121,13 +127,42 @@ export function OutputPanel() {
     URL.revokeObjectURL(url);
   };
 
+  const handleExportWord = async () => {
+    if (exporting) return;
+    setExporting(true);
+    try {
+      await exportToWord(filledSections, skillName);
+    } catch (err) {
+      console.error('Word 导出失败:', err);
+      alert('导出 Word 失败，请重试。\n\n如持续失败请使用"导出 Markdown"备用。');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
-    <div style={panelStyle}>
+    <div style={panelStyle(width)}>
       <div style={headerRowStyle}>
         <span style={panelTitleStyle}>输出文档</span>
-        <button onClick={handleExport} style={exportBtnStyle}>
-          导出 Markdown
-        </button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button onClick={handleExportMd} style={exportBtnStyle}>
+            导出 Markdown
+          </button>
+          <button
+            onClick={handleExportWord}
+            style={{
+              ...exportBtnStyle,
+              backgroundColor: exporting ? '#e8e8ed' : '#1a1a2e',
+              color: '#fff',
+              border: '1px solid #1a1a2e',
+              opacity: exporting ? 0.6 : 1,
+              cursor: exporting ? 'not-allowed' : 'pointer',
+            }}
+            disabled={exporting}
+          >
+            {exporting ? '导出中...' : '导出 Word'}
+          </button>
+        </div>
       </div>
       {state.output.sections.map((section) =>
         section.content ? (
@@ -138,7 +173,7 @@ export function OutputPanel() {
               </span>
               {section.title}
               {section.mermaidDiagram && (
-                <span style={{ fontSize: 10, color: '#2383e2', marginLeft: 4, fontWeight: 400 }}>
+                <span style={{ fontSize: 10, color: '#818cf8', marginLeft: 4, fontWeight: 400 }}>
                   流程图
                 </span>
               )}

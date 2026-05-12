@@ -13,8 +13,8 @@ const listStyle: React.CSSProperties = {
 
 const bubbleBase: React.CSSProperties = {
   maxWidth: '72%',
-  padding: '10px 16px',
-  borderRadius: 10,
+  padding: '12px 18px',
+  borderRadius: 16,
   fontSize: 14,
   lineHeight: 1.65,
   wordBreak: 'break-word',
@@ -22,9 +22,9 @@ const bubbleBase: React.CSSProperties = {
 
 const timeStyle: React.CSSProperties = {
   fontSize: 11,
-  color: '#9b9b96',
-  marginTop: 3,
-  padding: '0 4px',
+  color: '#a0a0ab',
+  marginTop: 4,
+  padding: '0 6px',
 };
 
 const dateSepStyle: React.CSSProperties = {
@@ -38,13 +38,13 @@ const dateSepStyle: React.CSSProperties = {
 const dateSepLine: React.CSSProperties = {
   flex: 1,
   height: 1,
-  backgroundColor: '#f0f0ec',
+  backgroundColor: '#e2e2e8',
   maxWidth: 80,
 };
 
 const dateSepText: React.CSSProperties = {
   fontSize: 12,
-  color: '#9b9b96',
+  color: '#90909b',
   fontWeight: 500,
   whiteSpace: 'nowrap',
 };
@@ -83,8 +83,8 @@ export function MessageList({ messages }: { messages: Message[] }) {
   if (messages.length === 0) {
     return (
       <div style={{ ...listStyle, alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ color: '#b4b4b0', fontSize: 14, textAlign: 'center', maxWidth: 340 }}>
-          <div style={{ fontSize: 40, marginBottom: 12, opacity: 0.6 }}>✦</div>
+        <div style={{ color: '#a0a0ab', fontSize: 14, textAlign: 'center', maxWidth: 340 }}>
+          <div style={{ fontSize: 40, marginBottom: 12, opacity: 0.5 }}>✦</div>
           在下方描述您的需求，AI 助手将引导您逐步完成
         </div>
       </div>
@@ -119,10 +119,11 @@ export function MessageList({ messages }: { messages: Message[] }) {
         <div
           style={{
             ...bubbleBase,
-            backgroundColor: msg.role === 'user' ? '#2383e2' : '#f3f3f0',
-            color: msg.role === 'user' ? '#fff' : '#1a1a1a',
-            borderBottomRightRadius: msg.role === 'user' ? 4 : 10,
-            borderBottomLeftRadius: msg.role === 'assistant' ? 4 : 10,
+            backgroundColor: msg.role === 'user' ? '#6366f1' : '#f3f3f5',
+            color: msg.role === 'user' ? '#fff' : '#1a1a2e',
+            borderBottomRightRadius: msg.role === 'user' ? 6 : 16,
+            borderBottomLeftRadius: msg.role === 'assistant' ? 6 : 16,
+            boxShadow: msg.role === 'user' ? '0 1px 3px rgba(99,102,241,0.25)' : '0 1px 2px rgba(0,0,0,0.04)',
           }}
         >
           <ReactMarkdown>{msg.content}</ReactMarkdown>

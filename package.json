@@ -1,7 +1,7 @@
 {
   "name": "ai-pm-assistant",
   "private": true,
-  "version": "1.0.0",
+  "version": "5.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "docx": "^9.6.1",
     "express": "^4.21.0",
     "http-proxy-middleware": "^3.0.0",
     "mermaid": "^11.4.0",

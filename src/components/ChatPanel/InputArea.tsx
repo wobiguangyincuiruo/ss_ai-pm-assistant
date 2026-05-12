@@ -11,9 +11,10 @@ const rowStyle: React.CSSProperties = {
   gap: 10,
   alignItems: 'flex-end',
   backgroundColor: '#fff',
-  borderRadius: 12,
-  padding: '8px 8px 8px 16px',
-  border: '1px solid #e9e9e7',
+  borderRadius: 16,
+  padding: '8px 8px 8px 18px',
+  border: '1px solid #e8e8ed',
+  boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
   transition: 'border-color 0.15s, box-shadow 0.15s',
 };
 
@@ -28,7 +29,7 @@ const textareaStyle: React.CSSProperties = {
   minHeight: 24,
   maxHeight: 120,
   fontFamily: 'inherit',
-  color: '#1a1a1a',
+  color: '#1a1a2e',
   backgroundColor: 'transparent',
 };
 
@@ -36,8 +37,8 @@ const btnStyle: React.CSSProperties = {
   width: 32,
   height: 32,
   border: 'none',
-  borderRadius: 8,
-  backgroundColor: '#2383e2',
+  borderRadius: 20,
+  backgroundColor: '#6366f1',
   color: '#fff',
   cursor: 'pointer',
   display: 'flex',
@@ -45,12 +46,12 @@ const btnStyle: React.CSSProperties = {
   justifyContent: 'center',
   fontSize: 16,
   flexShrink: 0,
-  transition: 'background-color 0.15s',
+  transition: 'opacity 0.15s',
 };
 
 const btnDisabledStyle: React.CSSProperties = {
   ...btnStyle,
-  backgroundColor: '#d9d9d6',
+  opacity: 0.3,
   cursor: 'not-allowed',
 };
 

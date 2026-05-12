@@ -34,10 +34,16 @@ export function loadSession(id: string): SessionData | null {
 }
 
 export function saveSession(data: SessionData): void {
+  const id = data.meta.id;
   try {
-    const id = data.meta.id;
-    localStorage.setItem(SESSION_PREFIX + id, JSON.stringify(data));
+    const raw = JSON.stringify(data);
+    localStorage.setItem(SESSION_PREFIX + id, raw);
+  } catch (err) {
+    console.error('[Storage] 写入会话数据失败:', err);
+    throw err;
+  }
 
+  try {
     const index = loadIndex();
     const existingIdx = index.findIndex((m) => m.id === id);
     if (existingIdx >= 0) {
@@ -46,8 +52,10 @@ export function saveSession(data: SessionData): void {
       index.unshift(data.meta);
     }
     saveIndex(index);
-  } catch {
-    // silently ignore
+    // 通知同窗口内其他组件会话列表已更新
+    window.dispatchEvent(new CustomEvent('session-updated'));
+  } catch (err) {
+    console.error('[Storage] 更新索引失败:', err);
   }
 }
 
@@ -63,6 +71,7 @@ export function renameSession(id: string, newTitle: string): void {
     if (existingIdx >= 0) {
       index[existingIdx] = data.meta;
       saveIndex(index);
+      window.dispatchEvent(new CustomEvent('session-updated'));
     }
   } catch {
     // silently ignore
@@ -74,6 +83,7 @@ export function deleteSession(id: string): void {
     localStorage.removeItem(SESSION_PREFIX + id);
     const index = loadIndex().filter((m) => m.id !== id);
     saveIndex(index);
+    window.dispatchEvent(new CustomEvent('session-updated'));
   } catch {
     // silently ignore
   }

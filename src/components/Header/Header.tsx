@@ -7,40 +7,42 @@ import { APIKeyInput } from './APIKeyInput';
 import type { ApiProvider } from '../../types';
 
 const headerStyle: React.CSSProperties = {
-  height: 48,
+  height: 54,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  padding: '0 20px',
-  backgroundColor: '#fff',
+  padding: '0 24px',
+  backgroundColor: '#ffffff',
   flexShrink: 0,
-  borderBottom: '1px solid #f0f0ec',
+  borderBottom: '1px solid #e8e8ed',
+  boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
 };
 
 const leftStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
-  gap: 12,
+  gap: 14,
 };
 
 const rightStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
-  gap: 6,
+  gap: 8,
 };
 
 const pillBase: React.CSSProperties = {
-  height: 28,
-  padding: '0 10px',
-  fontSize: 12,
-  border: '1px solid transparent',
-  borderRadius: 6,
+  height: 32,
+  padding: '0 12px',
+  fontSize: 13,
+  border: '1px solid #e8e8ed',
+  borderRadius: 8,
   outline: 'none',
-  backgroundColor: 'transparent',
-  color: '#6b6b67',
+  backgroundColor: '#fff',
+  color: '#1a1a2e',
   fontFamily: 'inherit',
   cursor: 'pointer',
-  transition: 'background 0.15s, color 0.15s',
+  fontWeight: 500,
+  transition: 'background 0.15s, color 0.15s, border-color 0.15s',
 };
 
 const selectStyle: React.CSSProperties = {
@@ -63,26 +65,39 @@ const urlInputStyle: React.CSSProperties = {
 };
 
 const titleStyle: React.CSSProperties = {
-  fontSize: 14,
-  fontWeight: 600,
-  color: '#1a1a1a',
+  fontSize: 15,
+  fontWeight: 700,
+  color: '#1a1a2e',
   whiteSpace: 'nowrap',
-  letterSpacing: '-0.01em',
+  letterSpacing: '-0.02em',
 };
 
 const iconBtnStyle: React.CSSProperties = {
-  ...pillBase,
-  width: 28,
+  width: 32,
+  height: 32,
   padding: 0,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   fontSize: 15,
-  borderRadius: 6,
+  borderRadius: 8,
+  border: '1px solid #e8e8ed',
+  backgroundColor: '#fff',
+  color: '#1a1a2e',
+  fontFamily: 'inherit',
+  cursor: 'pointer',
+  fontWeight: 500,
+  transition: 'background 0.15s, color 0.15s',
 };
 
 const newSessionBtnStyle: React.CSSProperties = {
   ...pillBase,
+  backgroundColor: '#6366f1',
+  color: '#fff',
+  border: '1px solid #6366f1',
+  fontWeight: 600,
+  fontSize: 12,
+  padding: '0 16px',
 };
 
 const PROVIDER_OPTIONS: { value: ApiProvider; label: string }[] = [
