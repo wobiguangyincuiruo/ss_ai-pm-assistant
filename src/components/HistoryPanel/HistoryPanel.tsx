@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAppState } from '../../context/AppContext';
 import { useSessions } from '../../hooks/useSessions';
-import { loadSession } from '../../services/storage';
+import { loadSession, loadSessionFromServer } from '../../services/storage';
 import type { SessionMeta } from '../../types';
 
 interface HistoryPanelProps {
@@ -198,8 +198,11 @@ export function HistoryPanel({ visible, onClose }: HistoryPanelProps) {
 
   if (!visible) return null;
 
-  const handleLoad = (meta: SessionMeta) => {
-    const data = loadSession(meta.id);
+  const handleLoad = async (meta: SessionMeta) => {
+    let data = loadSession(meta.id);
+    if (!data) {
+      data = await loadSessionFromServer(meta.id);
+    }
     if (data) {
       dispatch({ type: 'LOAD_SESSION', payload: data });
       onClose();

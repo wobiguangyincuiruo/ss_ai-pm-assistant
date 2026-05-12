@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AppProvider, useAppState } from './context/AppContext';
 import { getSkillById } from './data/skills';
-import { saveSession } from './services/storage';
+import { saveSession, saveSessionToServer } from './services/storage';
 import { Header } from './components/Header/Header';
 import { ChatPanel } from './components/ChatPanel/ChatPanel';
 import { OutputPanel } from './components/OutputPanel/OutputPanel';
@@ -109,7 +109,7 @@ function AutoSaver() {
     const userMsgs = state.messages.filter((m) => m.role === 'user');
     const firstUserMsg = userMsgs.length > 0 ? userMsgs[0].content : '';
 
-    saveSession({
+    const sessionData = {
       meta: {
         id: state.sessionId,
         title: firstUserMsg.slice(0, 50) || '空会话',
@@ -125,7 +125,9 @@ function AutoSaver() {
       apiProvider: state.apiProvider,
       model: state.model,
       apiBaseUrl: state.apiBaseUrl,
-    });
+    };
+    saveSession(sessionData);
+    saveSessionToServer(sessionData);
   }, [
     state.messages,
     state.output,

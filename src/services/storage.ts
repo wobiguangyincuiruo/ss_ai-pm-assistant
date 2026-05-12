@@ -78,3 +78,49 @@ export function deleteSession(id: string): void {
     // silently ignore
   }
 }
+
+// ---- Server-side persistence (dual-write) ----
+
+export async function saveSessionToServer(data: SessionData): Promise<void> {
+  try {
+    await fetch('/api/save-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+  } catch {
+    // server not available — silently skip
+  }
+}
+
+export async function deleteSessionFromServer(id: string): Promise<void> {
+  try {
+    await fetch('/api/delete-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    });
+  } catch {
+    // silently skip
+  }
+}
+
+export async function loadSessionFromServer(id: string): Promise<SessionData | null> {
+  try {
+    const res = await fetch(`/api/sessions/${encodeURIComponent(id)}`);
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function loadIndexFromServer(): Promise<SessionMeta[]> {
+  try {
+    const res = await fetch('/api/sessions');
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
+}
