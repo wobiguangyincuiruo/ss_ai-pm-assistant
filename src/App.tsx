@@ -7,6 +7,60 @@ import { ChatPanel } from './components/ChatPanel/ChatPanel';
 import { OutputPanel } from './components/OutputPanel/OutputPanel';
 import { HistoryPanel } from './components/HistoryPanel/HistoryPanel';
 
+function buildPrdMarkdown(
+  sections: { title: string; content: string; mermaidDiagram?: string }[],
+  skillName: string
+): string {
+  const filled = sections.filter((s) => s.content.length > 0);
+  if (filled.length === 0) return '';
+  const now = new Date().toLocaleString('zh-CN');
+  let md = `# ${skillName}\n\n> 自动生成于 ${now}\n\n`;
+  md += filled
+    .map((s) => {
+      let block = `## ${s.title}\n\n${s.content}`;
+      if (s.mermaidDiagram) {
+        block += `\n\n\`\`\`mermaid\n${s.mermaidDiagram}\n\`\`\``;
+      }
+      return block;
+    })
+    .join('\n\n---\n\n');
+  return md;
+}
+
+function PrdAutoSaver() {
+  const { state } = useAppState();
+  const lastHashRef = useRef('');
+
+  useEffect(() => {
+    const skill = getSkillById(state.currentSkillId);
+    const md = buildPrdMarkdown(state.output.sections, skill?.name ?? '数字员工');
+    if (!md) return;
+
+    const hash = md.slice(0, 200);
+    if (hash === lastHashRef.current) return;
+    lastHashRef.current = hash;
+
+    const title = state.messages
+      .filter((m) => m.role === 'user')
+      .map((m) => m.content)[0]
+      ?.slice(0, 40) || '未命名';
+
+    const label = skill?.outputLabel ?? '文档';
+    const date = new Date().toISOString().slice(0, 10);
+    const filename = `${label}_${title}_${date}.md`;
+
+    fetch('/api/save-prd', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filename, content: md }),
+    }).catch(() => {
+      // dev mode or server not available — silently skip
+    });
+  }, [state.output, state.currentSkillId, state.messages]);
+
+  return null;
+}
+
 function AutoOpeningMessage() {
   const { state, dispatch } = useAppState();
   const firedFor = useRef<string | null>(null);
@@ -96,6 +150,7 @@ function AppContent() {
     >
       <AutoOpeningMessage />
       <AutoSaver />
+      <PrdAutoSaver />
       <Header onToggleHistory={() => setHistoryVisible((v) => !v)} />
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
         <HistoryPanel

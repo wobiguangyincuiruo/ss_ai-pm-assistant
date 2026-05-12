@@ -2,18 +2,40 @@ import express from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import { existsSync } from 'fs';
+import { existsSync, mkdirSync, writeFileSync } from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const distDir = join(__dirname, 'dist');
+const prdsDir = join(__dirname, 'prds');
 
 if (!existsSync(distDir)) {
   console.error('dist/ 目录不存在，请先执行 npm run build');
   process.exit(1);
 }
 
+mkdirSync(prdsDir, { recursive: true });
+
 const app = express();
+app.use(express.json({ limit: '2mb' }));
+
+// ---- PRD 本地保存端点 ----
+app.post('/api/save-prd', (req, res) => {
+  try {
+    const { filename, content } = req.body;
+    if (!filename || !content) {
+      return res.status(400).json({ error: 'filename 和 content 为必填字段' });
+    }
+    const safeName = filename.replace(/[^a-zA-Z0-9一-龥\-_\.]/g, '_').slice(0, 120);
+    const filepath = join(prdsDir, safeName);
+    writeFileSync(filepath, content, 'utf-8');
+    console.log(`PRD 已保存：prds/${safeName}`);
+    res.json({ ok: true, path: `prds/${safeName}` });
+  } catch (err) {
+    console.error('保存 PRD 失败:', err);
+    res.status(500).json({ error: '保存失败' });
+  }
+});
 
 // ---- API Proxy Routes (same logic as vite.config.ts) ----
 
@@ -23,7 +45,6 @@ const proxyOpts = (target) => ({
   pathRewrite: (path) => path.replace(/^\/api\/(anthropic|deepseek|openai|custom)/, ''),
 });
 
-// 自定义端点：从 X-Proxy-Target 头读取目标地址
 const customProxy = createProxyMiddleware({
   changeOrigin: true,
   pathRewrite: (path) => path.replace(/^\/api\/custom/, ''),
@@ -49,5 +70,6 @@ app.get('*', (_req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`数字员工服务已启动：http://localhost:${PORT}`);
+  console.log(`PRD 保存目录：${prdsDir}`);
   console.log('按 Ctrl+C 停止');
 });
